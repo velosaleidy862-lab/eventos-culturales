@@ -1,58 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Eventos Culturales
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web para organizar los eventos de una organización cultural y administrar los participantes inscritos en cada uno.
+Desarrollado con **Laravel**, **MySQL** y **Bootstrap 5** como parte de la evaluación de Laravel (Grupo 6, Ejercicio 2).
 
-## About Laravel
+## Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **CRUD de Eventos:** nombre, tipo, descripción, lugar, fecha, hora y cupo máximo.
+- **CRUD de Participantes:** documento, nombres, apellidos, correo, teléfono, evento inscrito y fecha de inscripción.
+- **Relación:** cada participante pertenece a un evento (clave foránea `participantes.evento_id → eventos.id`).
+- Validación de campos obligatorios y tipos de dato, con mensajes de éxito y de error.
+- Control de cupos: no se puede inscribir a alguien en un evento lleno, ni reducir el cupo por debajo de los inscritos.
+- Un evento con participantes no se puede eliminar.
+- Eliminación con confirmación y navegación entre los dos módulos.
+- Datos de prueba (seeders) para demostrar el funcionamiento.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3 o superior (extensiones `mbstring`, `pdo_mysql`)
+- Composer
+- MySQL 8 (o MariaDB 10.6+)
+- Git
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalación
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clonar el repositorio
+git clone https://github.com/velosaleidy862-lab/eventos-culturales.git
+cd eventos-culturales
 
-php artisan boost:install
+# 2. Instalar dependencias
+composer install
+
+# 3. Crear el archivo de entorno y la llave de la aplicación
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Configuración de la base de datos
 
-## Contributing
+1. Crear la base de datos en MySQL:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```sql
+   CREATE DATABASE eventos_culturales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
 
-## Code of Conduct
+2. Revisar en el archivo `.env` los datos de conexión (el usuario y la contraseña dependen de cada equipo):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=eventos_culturales
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-## Security Vulnerabilities
+3. Crear las tablas y cargar los datos de prueba:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## License
+## Ejecución
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan serve
+```
+
+Abrir <http://127.0.0.1:8000>. La página principal lleva al módulo de Eventos; desde el menú superior se accede a Participantes.
+
+## Pruebas automáticas
+
+```bash
+php artisan test
+```
+
+Las pruebas usan una base de datos SQLite en memoria, por lo que no tocan los datos de MySQL.
+Además se ejecutan automáticamente con **GitHub Actions** (`.github/workflows/tests.yml`) en cada `push` y `pull request` hacia `main` y `develop`.
+
+## Estructura principal
+
+| Ruta | Descripción |
+|------|-------------|
+| `app/Models` | Modelos `Evento` y `Participante` |
+| `app/Http/Controllers` | Controladores de los dos CRUD |
+| `app/Http/Requests` | Reglas de validación y mensajes en español |
+| `database/migrations` | Tablas `eventos` y `participantes` |
+| `database/seeders` | Datos de prueba |
+| `resources/views` | Vistas Blade con Bootstrap |
+| `tests/Feature` | Pruebas de ambos módulos |
+
+## Flujo de ramas
+
+- `main`: versión estable.
+- `develop`: integración de los avances.
+- `feature/*`: ramas de funcionalidades, integradas a `develop` mediante Pull Requests.
+
+## Autora
+
+Leidy Diana Aguirre Velosa — Aprendiz SENA, Análisis y Desarrollo de Software (ficha 3311373).
