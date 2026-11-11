@@ -36,4 +36,8 @@
         </tbody>
     </table>
 </div></div>
+        <dt class="col-sm-3">Cupo máximo</dt><dd class="col-sm-9">{{ $evento->cupo_maximo }} personas</dd>
+    </dl>
+</div></div>
+
 @endsection

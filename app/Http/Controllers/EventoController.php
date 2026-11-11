@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EventoRequest;
 use App\Models\Evento;
 use Illuminate\Http\RedirectResponse;
+use App\Models\Evento;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class EventoController extends Controller
@@ -15,6 +19,7 @@ class EventoController extends Controller
             ->orderBy('fecha')
             ->orderBy('hora')
             ->paginate(10);
+        $eventos = Evento::orderBy('fecha')->orderBy('hora')->paginate(10);
 
         return view('eventos.index', compact('eventos'));
     }
@@ -27,6 +32,9 @@ class EventoController extends Controller
     public function store(EventoRequest $request): RedirectResponse
     {
         Evento::create($request->validated());
+    public function store(Request $request): RedirectResponse
+    {
+        Evento::create($this->validar($request));
 
         return redirect()->route('eventos.index')
             ->with('success', 'El evento se creó correctamente.');
@@ -55,6 +63,9 @@ class EventoController extends Controller
         }
 
         $evento->update($request->validated());
+    public function update(Request $request, Evento $evento): RedirectResponse
+    {
+        $evento->update($this->validar($request));
 
         return redirect()->route('eventos.index')
             ->with('success', 'El evento se actualizó correctamente.');
@@ -71,5 +82,18 @@ class EventoController extends Controller
 
         return redirect()->route('eventos.index')
             ->with('success', 'El evento se eliminó correctamente.');
+    }
+
+    private function validar(Request $request): array
+    {
+        return $request->validate([
+            'nombre' => ['required', 'string', 'max:120'],
+            'tipo' => ['required', Rule::in(Evento::TIPOS)],
+            'descripcion' => ['required', 'string', 'max:1000'],
+            'lugar' => ['required', 'string', 'max:120'],
+            'fecha' => ['required', 'date'],
+            'hora' => ['required', 'date_format:H:i'],
+            'cupo_maximo' => ['required', 'integer', 'min:1', 'max:100000'],
+        ]);
     }
 }

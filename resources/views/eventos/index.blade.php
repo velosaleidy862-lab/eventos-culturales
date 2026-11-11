@@ -18,6 +18,7 @@
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th class="text-center">Inscritos / Cupo</th>
+                <th class="text-center">Cupo</th>
                 <th class="text-end">Acciones</th>
             </tr>
             </thead>
@@ -30,6 +31,7 @@
                     <td>{{ $evento->fecha->format('d/m/Y') }}</td>
                     <td>{{ substr($evento->hora, 0, 5) }}</td>
                     <td class="text-center">{{ $evento->participantes_count }} / {{ $evento->cupo_maximo }}</td>
+                    <td class="text-center">{{ $evento->cupo_maximo }}</td>
                     <td class="text-end text-nowrap">
                         <a href="{{ route('eventos.show', $evento) }}" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="bi bi-eye"></i></a>
                         <a href="{{ route('eventos.edit', $evento) }}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
