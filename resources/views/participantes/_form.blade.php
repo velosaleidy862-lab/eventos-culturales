@@ -48,6 +48,7 @@
             <option value="">Seleccione un evento…</option>
             @foreach ($eventos as $evento)
                 <option value="{{ $evento->id }}" @selected((int) old('evento_id', $p?->evento_id) === $evento->id)>
+                    {{ $evento->nombre }} — {{ $evento->fecha->format('d/m/Y') }}
                     {{ $evento->nombre }} — {{ $evento->fecha->format('d/m/Y') }} ({{ $evento->cuposDisponibles() }} cupos)
                 </option>
             @endforeach

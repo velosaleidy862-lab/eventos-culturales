@@ -23,6 +23,10 @@
                     <a class="nav-link {{ request()->routeIs('eventos.*') ? 'active' : '' }}"
                        href="{{ route('eventos.index') }}">Eventos</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('participantes.*') ? 'active' : '' }}"
+                       href="{{ route('participantes.index') }}">Participantes</a>
+                </li>
             </ul>
         </div>
     </div>

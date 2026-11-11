@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evento;
+use App\Models\Participante;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Http\Requests\ParticipanteRequest;
 use App\Models\Evento;
 use App\Models\Participante;
@@ -27,6 +32,9 @@ class ParticipanteController extends Controller
         ]);
     }
 
+    public function store(Request $request): RedirectResponse
+    {
+        Participante::create($this->validar($request));
     public function store(ParticipanteRequest $request): RedirectResponse
     {
         Participante::create($request->validated());
@@ -50,6 +58,9 @@ class ParticipanteController extends Controller
         ]);
     }
 
+    public function update(Request $request, Participante $participante): RedirectResponse
+    {
+        $participante->update($this->validar($request, $participante));
     public function update(ParticipanteRequest $request, Participante $participante): RedirectResponse
     {
         $participante->update($request->validated());
@@ -64,5 +75,21 @@ class ParticipanteController extends Controller
 
         return redirect()->route('participantes.index')
             ->with('success', 'El participante se eliminó correctamente.');
+    }
+
+    private function validar(Request $request, ?Participante $participante = null): array
+    {
+        return $request->validate([
+            'documento' => [
+                'required', 'digits_between:5,15',
+                Rule::unique('participantes', 'documento')->ignore($participante?->id),
+            ],
+            'nombres' => ['required', 'string', 'max:80'],
+            'apellidos' => ['required', 'string', 'max:80'],
+            'correo' => ['required', 'email', 'max:120'],
+            'telefono' => ['required', 'digits_between:7,15'],
+            'evento_id' => ['required', 'integer', 'exists:eventos,id'],
+            'fecha_inscripcion' => ['required', 'date'],
+        ]);
     }
 }
