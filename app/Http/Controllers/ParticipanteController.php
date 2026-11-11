@@ -7,6 +7,10 @@ use App\Models\Participante;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\ParticipanteRequest;
+use App\Models\Evento;
+use App\Models\Participante;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ParticipanteController extends Controller
@@ -31,6 +35,9 @@ class ParticipanteController extends Controller
     public function store(Request $request): RedirectResponse
     {
         Participante::create($this->validar($request));
+    public function store(ParticipanteRequest $request): RedirectResponse
+    {
+        Participante::create($request->validated());
 
         return redirect()->route('participantes.index')
             ->with('success', 'El participante se inscribió correctamente.');
@@ -54,6 +61,9 @@ class ParticipanteController extends Controller
     public function update(Request $request, Participante $participante): RedirectResponse
     {
         $participante->update($this->validar($request, $participante));
+    public function update(ParticipanteRequest $request, Participante $participante): RedirectResponse
+    {
+        $participante->update($request->validated());
 
         return redirect()->route('participantes.index')
             ->with('success', 'El participante se actualizó correctamente.');
